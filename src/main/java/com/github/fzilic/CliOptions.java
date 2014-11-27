@@ -13,21 +13,26 @@ public class CliOptions {
   private Integer port;
 
   @Option(name = "-k", aliases = {"--keystore"}, usage = "Path to keystore")
-  private String keystore;
+  private String keyStore;
 
   @Option(name = "-w", aliases = {"--keystore-pass"}, usage = "Keystore pass")
-  private String keystorePassword;
+  private String keyStorePass;
 
-  @Option(name = "-t", aliases =  { "--keystore-type"}, usage = "Keystore type, supported JKS, BKS")
-  private KeyStoreType keyStoreType;
+  @Option(name = "-t", aliases = {"--keystore-type"}, usage = "Keystore type, supported JKS, BKS")
+  private KeyStoreType keyStoreType = KeyStoreType.JKS;
 
 
-  public String getKeystore() {
-    return keystore;
+  public KeyStoreType getKeyStoreType() {
+    return keyStoreType;
   }
 
-  public String getKeystorePassword() {
-    return keystorePassword;
+  public String getKeyStore() {
+    return keyStore;
+
+  }
+
+  public String getKeyStorePass() {
+    return keyStorePass;
   }
 
   public String getHost() {
