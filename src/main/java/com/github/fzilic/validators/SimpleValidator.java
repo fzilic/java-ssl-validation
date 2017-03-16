@@ -4,24 +4,25 @@ import com.github.fzilic.CliOptions;
 import com.github.fzilic.KeyStoreType;
 import com.github.fzilic.util.KeyStoreBuilder;
 import com.github.fzilic.util.SSLContextBuilder;
-import org.apache.commons.lang3.StringUtils;
-
-import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.net.URL;
 import java.security.KeyStore;
+import javax.net.ssl.HttpsURLConnection;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
+@Slf4j
 public class SimpleValidator implements Validator {
 
-  private final String host;
+  protected final String host;
 
-  private final Integer port;
+  protected final Integer port;
 
-  private String keyStorePath;
+  protected String keyStorePath;
 
-  private String keyStorePass;
+  protected String keyStorePass;
 
-  private KeyStoreType keyStoreType;
+  protected KeyStoreType keyStoreType;
 
   public SimpleValidator(final CliOptions options) {
     host = options.getHost();
@@ -30,11 +31,6 @@ public class SimpleValidator implements Validator {
     keyStorePath = options.getKeyStore();
     keyStorePass = options.getKeyStorePass();
     keyStoreType = options.getKeyStoreType();
-  }
-
-  public SimpleValidator(final String host, final Integer port) {
-    this.host = host;
-    this.port = port;
   }
 
   @Override
@@ -50,6 +46,9 @@ public class SimpleValidator implements Validator {
         SSLContextBuilder.newInstance().forConnection(connection).withKeyStore(keyStore).apply();
       }
     }
+
     connection.connect();
+
+    connection.disconnect();
   }
 }

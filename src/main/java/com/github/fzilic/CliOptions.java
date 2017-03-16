@@ -1,10 +1,12 @@
 package com.github.fzilic;
 
+import lombok.Getter;
 import org.kohsuke.args4j.Option;
 
+@Getter
 public class CliOptions {
 
-  public static final Integer DEFAULT_SSL_PORT = Integer.valueOf(443);
+  public static final Integer DEFAULT_SSL_PORT = 443;
 
   @Option(name = "-h", aliases = {"-H", "--host"}, usage = "A valid host name or IP address")
   private String host;
@@ -21,26 +23,7 @@ public class CliOptions {
   @Option(name = "-t", aliases = {"--keystore-type"}, usage = "Keystore type, supported JKS, BKS")
   private KeyStoreType keyStoreType = KeyStoreType.JKS;
 
-
-  public KeyStoreType getKeyStoreType() {
-    return keyStoreType;
-  }
-
-  public String getKeyStore() {
-    return keyStore;
-
-  }
-
-  public String getKeyStorePass() {
-    return keyStorePass;
-  }
-
-  public String getHost() {
-    return host;
-  }
-
-  public Integer getPort() {
-    return port;
-  }
+  @Option(name="-v", aliases = "--validator", usage = "Validator type: SIMPLE, DETAILED")
+  private ValidatorType validatorType = ValidatorType.SIMPLE;
 
 }

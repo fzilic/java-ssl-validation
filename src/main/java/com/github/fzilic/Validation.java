@@ -1,15 +1,16 @@
 package com.github.fzilic;
 
-import asg.cliche.ShellFactory;
-import com.github.fzilic.validators.InteractiveValidator;
+import com.github.fzilic.validators.DetailedValidator;
 import com.github.fzilic.validators.SimpleValidator;
 import com.github.fzilic.validators.Validator;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
-import java.io.IOException;
-
+@Slf4j
 public class Validation {
 
   private static CliOptions OPTIONS = new CliOptions();
@@ -19,29 +20,46 @@ public class Validation {
 
     try {
       parser.parseArgument(args);
-    } catch (final CmdLineException exception) {
-      System.out.println(exception.getMessage());
-      parser.printUsage(System.out);
+    }
+    catch (final CmdLineException exception) {
+      log.error("Error parsing arguments", exception);
+      final ByteArrayOutputStream out = new ByteArrayOutputStream();
+      parser.printUsage(out);
+      log.info("\n" + new String(out.toByteArray()));
       return;
     }
 
-    if (StringUtils.isNotBlank(OPTIONS.getHost())) {
-      final Validator validator = new SimpleValidator(OPTIONS);
-      try {
-        validator.validate();
-      } catch (final IOException exception) {
-        System.out.println("Validation unsuccessful");
-        exception.printStackTrace();
-        return;
-      }
-      System.out.println("Validation successful");
-    } else {
-      try {
-        ShellFactory.createConsoleShell("ssl-val", "SSL Validation", new InteractiveValidator()).commandLoop();
-      } catch (IOException exception) {
-        return;
-      }
+
+    if (StringUtils.isBlank(OPTIONS.getHost())) {
+      log.warn("Empty host, please provide host to connect to");
+      final ByteArrayOutputStream out = new ByteArrayOutputStream();
+      parser.printUsage(out);
+      log.info("\n" + new String(out.toByteArray()));
+      return;
     }
+
+    Validator validator;
+    switch (OPTIONS.getValidatorType()) {
+      case SIMPLE:
+        validator = new SimpleValidator(OPTIONS);
+        break;
+      case DETAILED:
+        validator= new DetailedValidator(OPTIONS);
+        break;
+      default:
+        log.error("Unknown validator type");
+        return;
+    }
+
+    try {
+      validator.validate();
+    }
+    catch (final IOException exception) {
+      log.warn("Validation unsuccessful", exception);
+      return;
+    }
+    log.info("Validation successful");
+
   }
 
 }

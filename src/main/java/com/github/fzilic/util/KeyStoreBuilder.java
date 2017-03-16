@@ -1,13 +1,18 @@
 package com.github.fzilic.util;
 
 import com.github.fzilic.KeyStoreType;
-
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public final class KeyStoreBuilder {
 
   private InputStream inputStream;
@@ -32,12 +37,14 @@ public final class KeyStoreBuilder {
     if (file.exists() && file.isFile() && file.canRead()) {
       try {
         return fromInputStream(new FileInputStream(file));
-      } catch (FileNotFoundException e) {
+      }
+      catch (FileNotFoundException e) {
         // fall trough - we are checking for it
       }
-    } else {
+    }
+    else {
       isInError = true;
-      System.err.println("File not found or not readable, keystore will not initialize.");
+      log.error("File not found or not readable, keystore will not initialize.");
     }
     return this;
   }
@@ -60,24 +67,25 @@ public final class KeyStoreBuilder {
         store.load(inputStream, password.toCharArray());
 
         keyStore = store;
-      } catch (final KeyStoreException e) {
-        System.out.println("Failed to read keystore");
-        e.printStackTrace();
-      } catch (final CertificateException e) {
-        System.out.print("Failed to read certificate");
-        e.printStackTrace();
-      } catch (final NoSuchAlgorithmException e) {
-        System.out.println("Unknown algorithm " + e.getMessage());
-        e.printStackTrace();
-      } catch (final IOException e) {
-        System.out.println("Failed to open keystore file");
-        e.printStackTrace();
+      }
+      catch (final KeyStoreException e) {
+        log.error("Failed to read keystore", e);
+      }
+      catch (final CertificateException e) {
+        log.error("Failed to read certificate", e);
+      }
+      catch (final NoSuchAlgorithmException e) {
+        log.error("Unknown algorithm", e);
+      }
+      catch (final IOException e) {
+        log.error("Failed to open keystore file", e);
       }
       finally {
         if (inputStream != null) {
           try {
             inputStream.close();
-          } catch (IOException e) {
+          }
+          catch (IOException e) {
             // fall trough
           }
         }

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+  <property name="PATTERN_DEFAULT" value="[%date{dd.MM.yyyy HH:mm:ss.SSS}] : %-5level : %thread{10} : [%logger{10}:%line] : %message"/>
+
+  <property name="PATTERN_EXCEPTION" value="[%date{dd.MM.yyyy HH:mm:ss.SSS}] : %-5level : %thread{10} : [%logger{10}:%line] : %message%n%exception"/>
+
+  <appender class="ch.qos.logback.core.ConsoleAppender" name="ConsoleAppender">
+    <encoder>
+      <pattern>${PATTERN_DEFAULT}</pattern>
+    </encoder>
+  </appender>
+
+  <appender class="ch.qos.logback.core.ConsoleAppender" name="ConsoleExceptionAppender">
+    <encoder>
+      <pattern>${PATTERN_EXCEPTION}</pattern>
+    </encoder>
+  </appender>
+
+
+  <root level="debug">
+    <appender-ref ref="ConsoleAppender"/>
+  </root>
+
+  <logger name="com.github.fzilic" additivity="false">
+    <level value="error"/>
+    <appender-ref ref="ConsoleExceptionAppender"/>
+  </logger>
+
+  <logger name="com.github.fzilic">
+    <level value="trace"/>
+  </logger>
+
+  <logger name="org.apache.http">
+    <level value="off"/>
+  </logger>
+
+  <logger name="org.reflections">
+    <level value="off"/>
+  </logger>
+
+
+</configuration>
